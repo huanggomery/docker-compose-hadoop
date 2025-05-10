@@ -1,0 +1,87 @@
+services:
+  hadoop-master:
+    image: huanggomery/hadoop
+    user: "hadoop:hadoop"
+    container_name: hadoop-master
+    hostname: hadoop-master
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "9870:${HADOOP_HDFS_NN_PORT}"
+      - "8088:${HADOOP_YARN_RM_PORT}"
+      - "19888:${HADOOP_MR_HISTORYSERVER_PORT}"
+    command: ["sh","-c","/opt/apache/bootstrap.sh hadoop-master"]
+    networks:
+      - hadoop_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:${HADOOP_HDFS_NN_PORT} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  hadoop-slave-0:
+    image: huanggomery/hadoop
+    user: "hadoop:hadoop"
+    container_name: hadoop-slave-0
+    hostname: hadoop-slave-0
+    restart: always
+    depends_on:
+      - hadoop-master
+    env_file:
+      - .env
+    ports:
+      - "30864:${HADOOP_HDFS_DN_PORT}"
+      - "30042:${HADOOP_YARN_NM_PORT}"
+    command: ["sh","-c","/opt/apache/bootstrap.sh hadoop-slave hadoop-master ${HADOOP_HDFS_NN_PORT}"]
+    networks:
+      - hadoop_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:${HADOOP_HDFS_DN_PORT} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  hadoop-slave-1:
+    image: huanggomery/hadoop
+    user: "hadoop:hadoop"
+    container_name: hadoop-slave-1
+    hostname: hadoop-slave-1
+    restart: always
+    depends_on:
+      - hadoop-master
+    env_file:
+      - .env
+    ports:
+      - "30865:${HADOOP_HDFS_DN_PORT}"
+      - "30043:${HADOOP_YARN_NM_PORT}"
+    command: ["sh","-c","/opt/apache/bootstrap.sh hadoop-slave hadoop-master ${HADOOP_HDFS_NN_PORT}"]
+    networks:
+      - hadoop_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:${HADOOP_HDFS_DN_PORT} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  hadoop-slave-2:
+    image: huanggomery/hadoop
+    user: "hadoop:hadoop"
+    container_name: hadoop-slave-2
+    hostname: hadoop-slave-2
+    restart: always
+    depends_on:
+      - hadoop-master
+    env_file:
+      - .env
+    ports:
+      - "30866:${HADOOP_HDFS_DN_PORT}"
+      - "30044:${HADOOP_YARN_NM_PORT}"
+    command: ["sh","-c","/opt/apache/bootstrap.sh hadoop-slave hadoop-master ${HADOOP_HDFS_NN_PORT}"]
+    networks:
+      - hadoop_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:${HADOOP_HDFS_DN_PORT} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+networks:
+  hadoop_network:
+    driver: bridge
