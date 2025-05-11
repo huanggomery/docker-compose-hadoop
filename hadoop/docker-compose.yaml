@@ -11,6 +11,11 @@ services:
       - "9870:${HADOOP_HDFS_NN_PORT}"
       - "8088:${HADOOP_YARN_RM_PORT}"
       - "19888:${HADOOP_MR_HISTORYSERVER_PORT}"
+      - "8080:8080"
+      - "8081:8081"
+      - "4040:4040"
+      - "7077:7077"
+      - "18080:18080"
     command: ["sh","-c","/opt/apache/bootstrap.sh hadoop-master"]
     networks:
       - hadoop_network

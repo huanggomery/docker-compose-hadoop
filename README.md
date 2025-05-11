@@ -18,10 +18,17 @@
 	hadoop集群：127.0.0.1:9870  
 	yarn集群：127.0.0.1:8088  
 
-## spark
+## Spark
 1. 启动hadoop集群
 2. 进入hadoop-master的命令行  
 `docker exec -it hadoop-master bash`
 3. 运行spark程序时，只需加上`--master yarn`选项即可，例如：  
 `pyspark --master yarn`  
-`spark-submit --master yarn 程序名 参数`
+`spark-submit --master yarn --deploy-mode client|cluster 程序名 参数`  
+
+## Flink（Per-Job Mode）
+1. 启动hadoop集群
+2. 进入hadoop-master的命令行  
+`docker exec -it hadoop-master bash`
+3. 运行flink示例程序  
+`flink run -m yarn-cluster -yn 2 -yjm 1024 -ytm 1024 /opt/apache/flink/examples/batch/WordCount.jar`
